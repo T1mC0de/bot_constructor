@@ -1,0 +1,13 @@
+# Build output
+/backend/bin/
+
+# Local data written by the backend
+/backend/data/
+
+# Local configuration with secrets
+.env
+
+# OS / editor files
+.DS_Store
+.idea/
+.vscode/
