@@ -45,6 +45,11 @@ export class ApiError extends Error {
   }
 }
 
+// errorMessage is the text to show for an error caught from the functions below.
+export function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err)
+}
+
 export const NETWORK_ERROR = 'Не удалось связаться с сервером. Проверьте, что core запущен.'
 
 const SURVEY_PATH = '/api/v1/survey'

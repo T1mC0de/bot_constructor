@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { ApiError, getSurvey, saveSurvey } from './api.ts'
+import { ApiError, errorMessage, getSurvey, saveSurvey } from './api.ts'
 import type { FieldError, Survey } from './api.ts'
 import { MAX_GREETING_LEN, MAX_QUESTIONS, charCount, validateSurvey } from './validation.ts'
 
@@ -59,10 +59,6 @@ function groupErrors(list: FieldError[], questions: QuestionDraft[]): Errors {
 
 const INVALID_FORM = 'Анкета содержит ошибки — исправьте отмеченные поля.'
 
-function errorText(err: unknown): string {
-  return err instanceof Error ? err.message : String(err)
-}
-
 type LoadState = { state: 'loading' } | { state: 'ready' } | { state: 'error'; message: string }
 
 export default function SurveyEditor() {
@@ -85,7 +81,7 @@ export default function SurveyEditor() {
         setLoad({ state: 'ready' })
       },
       (err: unknown) => {
-        if (!ignore) setLoad({ state: 'error', message: errorText(err) })
+        if (!ignore) setLoad({ state: 'error', message: errorMessage(err) })
       },
     )
     return () => {
@@ -153,7 +149,7 @@ export default function SurveyEditor() {
         showErrors(err.details)
       } else {
         setErrors(noErrors)
-        setFormError(`Не удалось сохранить анкету: ${errorText(err)}`)
+        setFormError(`Не удалось сохранить анкету: ${errorMessage(err)}`)
       }
     } finally {
       setSaving(false)
