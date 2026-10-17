@@ -131,11 +131,19 @@ describe('failures', () => {
   })
 
   test('error response that is not JSON', async () => {
-    // The Vite proxy answers like this when core is not running.
-    fetchMock.mockResolvedValue(new Response('', { status: 500 }))
+    fetchMock.mockResolvedValue(new Response('<html>Internal Server Error</html>', { status: 500 }))
 
     const err = await caught(getSurvey())
     expect(err.status).toBe(500)
     expect(err.message).toBe('Сервер вернул ошибку (HTTP 500).')
+  })
+
+  test('proxy cannot reach core', async () => {
+    // This is what the Vite dev server answers when core is not running.
+    fetchMock.mockResolvedValue(new Response('', { status: 502, headers: { 'Content-Type': 'text/plain' } }))
+
+    const err = await caught(getOrders())
+    expect(err.status).toBe(502)
+    expect(err.message).toBe(NETWORK_ERROR)
   })
 })

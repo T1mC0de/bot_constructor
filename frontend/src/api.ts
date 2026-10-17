@@ -100,7 +100,9 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
 
 function errorFromResponse(status: number, data: unknown): ApiError {
   if (!isRecord(data) || typeof data.error !== 'string') {
-    return new ApiError(status, `Сервер вернул ошибку (HTTP ${status}).`)
+    // The Vite proxy answers 502 in plain text when core is not running.
+    const unreachable = status === 502 || status === 503 || status === 504
+    return new ApiError(status, unreachable ? NETWORK_ERROR : `Сервер вернул ошибку (HTTP ${status}).`)
   }
   const details = Array.isArray(data.details) ? data.details.filter(isFieldError) : []
   return new ApiError(status, data.error, details)
